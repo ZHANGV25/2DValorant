@@ -7,20 +7,20 @@ public class playerController : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private FieldOfView fv;
+    [SerializeField] private GameObject[] attacks;
     //[SerializeField] private Transform firePoint;
     //[SerializeField] private GameObject ball;
 
     private Vector2 movement;
 
     private Rigidbody2D rb;
-    //private Camera cam;
 
 
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
         //cam = Camera.main;
-        fv.SetFoV(120);
+        fv.SetFoV(360);
         fv.SetViewDistance(7);
     }
     void Update()
@@ -46,11 +46,6 @@ public class playerController : MonoBehaviour
         {
             gameObject.GetComponent<Animator>().SetBool("isRunning", false);
         }
-
-        /*if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
-        {
-            Instantiate(ball, firePoint.transform.position, transform.rotation);
-        }*/
         fv.SetOrigin(transform.position);
         fv.SetAimDirection(direction);
     }
