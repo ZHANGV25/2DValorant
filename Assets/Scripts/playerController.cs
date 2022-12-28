@@ -1,27 +1,35 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class playerController : MonoBehaviour
+public class playerController : NetworkBehaviour
 {
     [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private FieldOfView fv;
+    [SerializeField] private float maxHealth = 100f;
+    //[SerializeField] private FieldOfView fv;
     [SerializeField] private GameObject[] attacks;
     //[SerializeField] private Transform firePoint;
     //[SerializeField] private GameObject ball;
 
     private Vector2 movement;
+    private float health;
 
     private Rigidbody2D rb;
 
+    public override void OnNetworkSpawn()
+    {
+        if (!IsOwner) Destroy(this);
+    }
 
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
+        health = maxHealth;
         //cam = Camera.main;
-        fv.SetFoV(360);
-        fv.SetViewDistance(7);
+        //fv.SetFoV(360);
+        //fv.SetViewDistance(7);
     }
     void Update()
     {
@@ -46,16 +54,31 @@ public class playerController : MonoBehaviour
         {
             gameObject.GetComponent<Animator>().SetBool("isRunning", false);
         }
-        fv.SetOrigin(transform.position);
-        fv.SetAimDirection(direction);
+        //fv.SetOrigin(transform.position);
+        //fv.SetAimDirection(direction);
     }
 
     void FixedUpdate()
     {
-        rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+        //rb.velocity += movement.normalized * (moveSpeed * Time.deltaTime);
+        rb.MovePosition(rb.position + movement.normalized * moveSpeed * Time.fixedDeltaTime);
         rb.velocity = Vector2.zero;
     }
 
+    public void TakeDamage(float damage)
+    {
+        health -= damage;
+        CheckIfDead();
+    }
+
+    void CheckIfDead()
+    {
+        if (health <= 0)
+        {
+            Destroy(gameObject);
+            SceneManager.LoadScene(0);
+        }
+    }
     /*void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.tag == "Enemy")

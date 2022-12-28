@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class bullet : MonoBehaviour
 {
-    public float damage;
-    public float range;
-    public float speed;
-    public float spread;
+    public float damage, range, speed, spread;
     //public Transform firePoint;
 
     private Rigidbody2D rb;
@@ -21,5 +18,9 @@ public class bullet : MonoBehaviour
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.tag == "Obejct") Destroy(this.gameObject);
+        if (collision.tag == "Player")
+        {
+            collision.gameObject.GetComponent<playerController>().TakeDamage(damage);
+        }
     }
 }
